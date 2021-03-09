@@ -1,0 +1,72 @@
+# arch configurations and problems
+
+记录过程，遇到类似问题可以参考。
+
+## efi 启动分区丢失问题
+
+安装在移动硬盘上的系统在硬盘拔出后会丢失`bios`启动选项。
+
+此时需要用刻入`iso`的启动盘重新安装。
+
+`mount`及之前的步骤必须全部做完，同时，`pacstrap`一步必须保证`/mnt/boot`内`.img`等文件安装完整。简单说就是一定要做`pacstarp /mnt base linux linux-firmware`。
+
+其余包已经安装好，不用重新下载。
+
+`arch-chroot`后，`grub-install`和`grub-mkconfig`步骤也须小心谨慎，尤其是后者，不能只出现两行提示，一定要确保出现`found...`。
+
+## bluetooth
+
+蓝牙配置问题。
+
+```shell
+sudo pacman -S pulseaudio-bluetooth
+sudo vim /etc/bluetooth/main.conf
+```
+
+添加自动启动配置：
+
+```shell
+[Policy]
+AutoEnable=true
+```
+
+## pdf 中文显示问题
+
+`okular`默认配置中文乱码。
+
+通过以下命令解决：
+
+```shell
+sudo pacman -S poppler-data
+```
+
+## 图形界面死机问题
+
+使用`ctrl + alt + fn + f2`切换到`tty2`，然后 kill 掉占内存大的程序。
+
+使用`ctrl + alt + fn + f1`切回到图形界面。
+
+目前思路是这个，没试过，但是切换是可以的。
+
+## vscode 无法登录问题
+
+报错：
+
+```shell
+Writing login information to the keychain failed with error 'The name org.freedesktop.secrets was not provided by any .service files'.
+```
+
+原回答网址在[这里](https://rtfm.co.ua/en/linux-the-nextcloud-client-qtkeychain-and-the-the-name-org-freedesktop-secrets-was-not-provided-by-any-service-files-error/)。
+
+简而言之，下载以下两个包：
+
+```shell
+yay -S qtkeychain gnome-keyring
+```
+
+通过以下两个命令来验证是否真的存在：
+
+```shell
+ls -l /usr/share/dbus-1/services/ | grep secret
+cat /usr/share/dbus-1/services/org.freedesktop.secrets.service
+```
