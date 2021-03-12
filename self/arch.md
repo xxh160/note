@@ -70,3 +70,19 @@ yay -S qtkeychain gnome-keyring
 ls -l /usr/share/dbus-1/services/ | grep secret
 cat /usr/share/dbus-1/services/org.freedesktop.secrets.service
 ```
+
+## groovy 配置
+
+下载官方包`groovy-3.0.7`
+
+解压至`/usr/lib/gdk`，`gdk`是我自己创建的文件夹
+
+创建符号链接`default`指向`groovy-3.0.7`
+
+> 模仿`arch`安装`jdk`的方法
+
+关于`/usr/lib`等文件夹的用途可参见`man hier`
+
+有个问题：使用`sudo pacman -S groovy`下载的`groovy`在`/usr/share/groovy`中
+
+这里我不知道需不需要也复制一份
