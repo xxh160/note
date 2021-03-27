@@ -4,7 +4,7 @@ js 学习笔记
 
 语言标准均以最新 `ECMAscript` 标准为主
 
-本文撰写的时候，最新标准为`ECMAscript6`
+目前最新标准为`ECMAscript6`
 
 ## 函数传入引用
 
@@ -193,6 +193,8 @@ for (let i in a) {
 ```
 
 否则输出是下标
+
+所以，尽量使用`for of`
 
 ## apply 调用函数
 
@@ -396,11 +398,11 @@ let arr = [];
 // correct: ({fo: obj.prop, bar: arr[0]} = {fo: 123, bar: true});
 ```
 
-还有较为清晰的代码demo：
+还有较为清晰的代码 demo：
 
 ```js
-console.log(eval('{fo:1}'));
-console.log(eval('({fo:1})'));
+console.log(eval("{fo:1}"));
+console.log(eval("({fo:1})"));
 ```
 
 输出：
