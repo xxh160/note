@@ -2,7 +2,7 @@
 
 总规划
 
-## 涂抹
+## 项目
 
 从上往下优先级递减
 
@@ -11,6 +11,7 @@
 - [ ] node + vue + express + mysql blog
 - [ ] jvm
 - [ ] icspa
+- [ ] JavaFx Schedule
 - [ ] adm
 
 ## 书蠹
