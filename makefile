@@ -1,11 +1,12 @@
 upload:
-	git add .
-	export CUR_TIME=$(date +"%Y-%m-%d_%H:%M:%S")
-	git commit -m "current time: `echo $CUR_TIME`"
-	git push origin main
-	unset CUR_TIME
+	-git add .
+	-export CUR_TIME=$(date +"%Y-%m-%d_%H:%M:%S")
+	echo $CUR_TIME
+	-git commit -m "current time: `echo $CUR_TIME`"
+	-git push origin main
+	-unset CUR_TIME
 
 maintain:
-	git fetch origin main:tmp
-	git merge tmp
-	git branch -d tmp
+	-git fetch origin main:tmp
+	-git merge tmp
+	-git branch -d tmp
