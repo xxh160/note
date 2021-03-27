@@ -1,10 +1,9 @@
+CUR_TIME:=$(date +"%Y-%m-%d_%H:%M:%S")
+
 upload:
 	@git add .
-	@export CUR_TIME=$(date +"%Y-%m-%d_%H:%M:%S")
-	echo $CUR_TIME
 	@git push origin main
-	@git commit -m "current time: `echo $CUR_TIME`"
-	@unset CUR_TIME
+	@git commit -m "a$(CUR_TIME)"
 
 maintain:
 	@git fetch origin main:tmp
