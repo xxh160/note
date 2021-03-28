@@ -79,7 +79,7 @@ cat /usr/share/dbus-1/services/org.freedesktop.secrets.service
 
 创建符号链接`default`指向`groovy-3.0.7`
 
-> 模仿`arch`安装`jdk`的方法
+> 模仿`pacman`安装`jdk`的方法
 
 关于`/usr/lib`等文件夹的用途可参见`man hier`
 
