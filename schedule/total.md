@@ -2,11 +2,18 @@
 
 总规划
 
+
+## 当期任务
+
+- [ ] 数据库作业
+- [ ] 算法oj
+- [ ] 软工二画图
+- [ ] 数据库跟上进度
+
 ## 项目
 
 从上往下优先级递减
 
-- [ ] gradle idea plugin demo
 - [ ] innovation projects
 - [ ] node + vue + express + mysql blog
 - [ ] jvm
