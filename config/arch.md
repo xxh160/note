@@ -10,6 +10,25 @@
 - typora
 - tmux
 - iwd
+- fcitx
+- vscode
+- yay
+
+### fcitx
+
+中文输入法配置。
+
+安装之后再装一些模块就好。
+
+```shell
+sudo pacman -S fcitx
+sudo pacman -S fcitx-cloudpinyin
+sudo pacman -S kcm-fcitx
+sudo pacman -S kimtoy
+sudo pacman -S vim-fcitx
+```
+
+但实际上没有解决终端下没法使用中文的问题。
 
 ### bluetooth
 
@@ -29,6 +48,12 @@ AutoEnable=true
 
 ### 页面大小配置
 
+`kde`系统设置中配置。
+
+`System Settings` > `Display and Monitor` > `Display Configuration`
+
+调整`Global scale`至合适大小，我目前电脑舒适值是175。
+
 ### pdf 中文显示
 
 `okular`默认配置中文乱码。
@@ -39,11 +64,51 @@ AutoEnable=true
 sudo pacman -S poppler-data
 ```
 
-### 图形界面死机
+### groovy 配置
+
+下载官方包`groovy-3.0.7`
+
+解压至`/usr/lib/gdk`，`gdk`是我自己创建的文件夹
+
+创建符号链接`default`指向`groovy-3.0.7`
+
+> 模仿`pacman`安装`jdk`的方法
+
+关于`/usr/lib`等文件夹的用途可参见`man hier`
+
+有个问题：使用`sudo pacman -S groovy`下载的`groovy`在`/usr/share/groovy`中
+
+这里我不知道需不需要也复制一份
+
+## 小技巧
+
+### 图形界面切换
 
 使用`ctrl + alt + fn + f2`切换到`tty2`，然后 kill 掉占内存大的程序。
 
 使用`ctrl + alt + fn + f1`切回到图形界面，也就是`tty1`。
+
+## Q&A
+
+### efi 启动分区丢失
+
+安装在移动硬盘上的系统在硬盘拔出后会丢失`bios`启动选项。
+
+此时需要用刻入`iso`的启动盘重新安装。
+
+`mount`及之前的步骤必须全部做完，同时，`pacstrap`一步必须保证`/mnt/boot`内`.img`等文件安装完整。简单说就是一定要做`pacstarp /mnt base linux linux-firmware`。
+
+其余包已经安装好，不用重新下载。
+
+`arch-chroot`后，`grub-install`和`grub-mkconfig`步骤也须小心谨慎，尤其是后者，不能只出现两行提示，一定要确保出现`found...`。
+
+### vim中文乱码
+
+在`.vimrc`中加入：
+
+```shell
+set encoding = utf-8
+```
 
 ### vscode 无法登录
 
@@ -67,36 +132,6 @@ yay -S qtkeychain gnome-keyring
 ls -l /usr/share/dbus-1/services/ | grep secret
 cat /usr/share/dbus-1/services/org.freedesktop.secrets.service
 ```
-
-### groovy 配置
-
-下载官方包`groovy-3.0.7`
-
-解压至`/usr/lib/gdk`，`gdk`是我自己创建的文件夹
-
-创建符号链接`default`指向`groovy-3.0.7`
-
-> 模仿`pacman`安装`jdk`的方法
-
-关于`/usr/lib`等文件夹的用途可参见`man hier`
-
-有个问题：使用`sudo pacman -S groovy`下载的`groovy`在`/usr/share/groovy`中
-
-这里我不知道需不需要也复制一份
-
-## Q&A
-
-### efi 启动分区丢失
-
-安装在移动硬盘上的系统在硬盘拔出后会丢失`bios`启动选项。
-
-此时需要用刻入`iso`的启动盘重新安装。
-
-`mount`及之前的步骤必须全部做完，同时，`pacstrap`一步必须保证`/mnt/boot`内`.img`等文件安装完整。简单说就是一定要做`pacstarp /mnt base linux linux-firmware`。
-
-其余包已经安装好，不用重新下载。
-
-`arch-chroot`后，`grub-install`和`grub-mkconfig`步骤也须小心谨慎，尤其是后者，不能只出现两行提示，一定要确保出现`found...`。
 
 ## 记一次重装系统
 
