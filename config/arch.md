@@ -2,6 +2,104 @@
 
 记录过程，遇到类似问题可以参考。
 
+## system config
+
+已安装的软件列表。
+
+- google-chrome
+- typora
+- tmux
+- iwd
+
+### bluetooth
+
+蓝牙配置。
+
+```shell
+sudo pacman -S pulseaudio-bluetooth
+sudo vim /etc/bluetooth/main.conf
+```
+
+添加自动启动配置：
+
+```shell
+[Policy]
+AutoEnable=true
+```
+
+### 页面大小配置
+
+### pdf 中文显示
+
+`okular`默认配置中文乱码。
+
+通过以下命令解决：
+
+```shell
+sudo pacman -S poppler-data
+```
+
+### 图形界面死机
+
+使用`ctrl + alt + fn + f2`切换到`tty2`，然后 kill 掉占内存大的程序。
+
+使用`ctrl + alt + fn + f1`切回到图形界面。
+
+目前思路是这个，没试过，但是切换是可以的。
+
+### vscode 无法登录
+
+报错：
+
+```shell
+Writing login information to the keychain failed with error 'The name org.freedesktop.secrets was not provided by any .service files'.
+```
+
+原回答网址在[这里](https://rtfm.co.ua/en/linux-the-nextcloud-client-qtkeychain-and-the-the-name-org-freedesktop-secrets-was-not-provided-by-any-service-files-error/)。
+
+简而言之，下载以下两个包：
+
+```shell
+yay -S qtkeychain gnome-keyring
+```
+
+通过以下两个命令来验证是否真的存在：
+
+```shell
+ls -l /usr/share/dbus-1/services/ | grep secret
+cat /usr/share/dbus-1/services/org.freedesktop.secrets.service
+```
+
+### groovy 配置
+
+下载官方包`groovy-3.0.7`
+
+解压至`/usr/lib/gdk`，`gdk`是我自己创建的文件夹
+
+创建符号链接`default`指向`groovy-3.0.7`
+
+> 模仿`pacman`安装`jdk`的方法
+
+关于`/usr/lib`等文件夹的用途可参见`man hier`
+
+有个问题：使用`sudo pacman -S groovy`下载的`groovy`在`/usr/share/groovy`中
+
+这里我不知道需不需要也复制一份
+
+## Q&A
+
+### efi 启动分区丢失怎
+
+安装在移动硬盘上的系统在硬盘拔出后会丢失`bios`启动选项。
+
+此时需要用刻入`iso`的启动盘重新安装。
+
+`mount`及之前的步骤必须全部做完，同时，`pacstrap`一步必须保证`/mnt/boot`内`.img`等文件安装完整。简单说就是一定要做`pacstarp /mnt base linux linux-firmware`。
+
+其余包已经安装好，不用重新下载。
+
+`arch-chroot`后，`grub-install`和`grub-mkconfig`步骤也须小心谨慎，尤其是后者，不能只出现两行提示，一定要确保出现`found...`。
+
 ## 记一次重装系统
 
 给`/usr`文件夹来了个递归的`chmod -R 775 /usr`。
@@ -73,89 +171,207 @@ timedatectl set-timezone Asia/Shanghai
 timedatecal set-ntp true
 ```
 
-## Q&A
+### 磁盘分区、格式化、文件系统挂载
 
-### efi 启动分区丢失问题
+我以前分好过一次，所以这次重装不用再分区，只是把`/dev/sda3`格式化了一边。
 
-安装在移动硬盘上的系统在硬盘拔出后会丢失`bios`启动选项。
+`/dev/sda2`也就是交换分区，`/dev/sda1`也就是启动分区完全没有动。
 
-此时需要用刻入`iso`的启动盘重新安装。
+如果需要重新分区的话，用`fdisk`分区即可，分区标准参照官方文档。
 
-`mount`及之前的步骤必须全部做完，同时，`pacstrap`一步必须保证`/mnt/boot`内`.img`等文件安装完整。简单说就是一定要做`pacstarp /mnt base linux linux-firmware`。
+格式化同上。
 
-其余包已经安装好，不用重新下载。
-
-`arch-chroot`后，`grub-install`和`grub-mkconfig`步骤也须小心谨慎，尤其是后者，不能只出现两行提示，一定要确保出现`found...`。
-
-### bluetooth
-
-蓝牙配置问题。
+挂载需要注意一个顺序问题。先挂载`linux root`分区，再在里边创建`/boot`文件夹挂载启动分区。
 
 ```shell
-sudo pacman -S pulseaudio-bluetooth
-sudo vim /etc/bluetooth/main.conf
+mount /dev/sda3 /mnt
+mkdir /mnt/boot
+mount /dev/sda1 /mnt/boot
+swapon /dev/sda2
 ```
 
-添加自动启动配置：
+### 配置软件仓库镜像
+
+就是把中国地区的镜像提到文件最开始。
 
 ```shell
-[Policy]
-AutoEnable=true
+vim /etc/pacman.d/mirrorlist
 ```
 
-### pdf 中文显示问题
+当然也可以自己后加，镜像网址还是很好找的。
 
-`okular`默认配置中文乱码。
-
-通过以下命令解决：
+别忘了刷新软件包仓库。
 
 ```shell
-sudo pacman -S poppler-data
+pacman -Syy
 ```
 
-### 图形界面死机问题
+### 安装系统
 
-使用`ctrl + alt + fn + f2`切换到`tty2`，然后 kill 掉占内存大的程序。
+通过`pacstrap`脚本安装基本软件包。
 
-使用`ctrl + alt + fn + f1`切回到图形界面。
-
-目前思路是这个，没试过，但是切换是可以的。
-
-### vscode 无法登录问题
-
-报错：
+参考czg的文档，这一步安装了不少软件包。
 
 ```shell
-Writing login information to the keychain failed with error 'The name org.freedesktop.secrets was not provided by any .service files'.
+pacstrap /mnt base linux linux-frimware f2fs-tools vim man-db man-pages texinfo sof-firmware alsa-ucm-conf refind zsh base-devel plasma kde-system konsole dolphin pkgstats fwupd mlocate git e2fsprogs iwd
 ```
 
-原回答网址在[这里](https://rtfm.co.ua/en/linux-the-nextcloud-client-qtkeychain-and-the-the-name-org-freedesktop-secrets-was-not-provided-by-any-service-files-error/)。
+这里边大部分是我用不到的好像。
 
-简而言之，下载以下两个包：
+如果这里不安装`iwd`，重启后就用不了了。
+
+### 进入chroot
+
+先生成`fstab`文件，定义磁盘挂载。
 
 ```shell
-yay -S qtkeychain gnome-keyring
+genfstab -U /mnt >> /mnt/etc/fstab
 ```
 
-通过以下两个命令来验证是否真的存在：
+进入`chroot`环境。
 
 ```shell
-ls -l /usr/share/dbus-1/services/ | grep secret
-cat /usr/share/dbus-1/services/org.freedesktop.secrets.service
+arch-chroot /mnt
 ```
 
-### groovy 配置
+此时相当于进入到`root`用户了。
 
-下载官方包`groovy-3.0.7`
+### 设置系统
 
-解压至`/usr/lib/gdk`，`gdk`是我自己创建的文件夹
+设置时区。
 
-创建符号链接`default`指向`groovy-3.0.7`
+```shell
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+```
+运行`hwclock`生成`/etc/adjtime`。
 
-> 模仿`pacman`安装`jdk`的方法
+```shell
+hwclock --systohc
+```
 
-关于`/usr/lib`等文件夹的用途可参见`man hier`
+本地化设置。
 
-有个问题：使用`sudo pacman -S groovy`下载的`groovy`在`/usr/share/groovy`中
+需要设置`locale.gen`和`locale.conf`这两个文件。
 
-这里我不知道需不需要也复制一份
+编辑`/etc/locale.gen`在对应地区前移除注释符号。
+
+我移除的是：
+
+```shell
+en_US.UTF-8 UTF-8
+zh_CN.UTF-8 UTF-8
+zh_TW.UTF-8 UTF-8
+```
+
+通过`locale-gen`来生成locale的信息：
+
+```shell
+locale-gen
+```
+
+创建`locale.conf`文件编辑`LANG`设置：
+
+```shell
+echo "LANG=en_GB.UTF-8" >> /etc/locale.conf
+```
+
+用`GB`不用`US`是因为在保证`tty`不乱码，系统日志以英文显示的同时，以24小时制显示时间。具体好处参见官方文档。
+
+设置网络。
+
+创建`/etc/hostname`文件。
+
+```shell
+echo "${your_hostname}" >> /etc/hostname
+```
+
+添加对应的信息到`/etc/hosts`，这部分看官方文档就好。
+
+同时，启动`networkmanager`和`iwd`的服务。
+
+```shell
+systemctl enable NetworkManager
+systemctl enable iwd
+```
+
+>下面配置`DNS`的步骤不是必要的，甚至可以说，如果不是出现问题，最好别配置。
+
+`DNS`解码不知道会不会出问题。我装系统的时候曾出现没装完就`reboot`的情况，重启之后无法解析域名，必须手动配置`DNS`服务器。
+
+`google`的`DNS`服务器是`8.8.8.8`。
+
+```shell
+echo "nameserver 8.8.8.8 >> /etc/resolv.conf"
+```
+
+其实还可以看看`iso`系统下的`/etc/resolv.conf`是怎么配置的。
+
+### 配置用户
+
+设置`root`密码的部分略过。
+
+调整`sudo`的配置，给予`wheel`用户组`root`权限：
+
+```shell
+EDITOR=vim visudo
+```
+
+在里边把以`# %wheel`开头的行首的`#`去掉即可，至于要不要密码看自己选择。
+
+之后再添加一个`wheel`用户组的用户即可，也就是主用户。
+
+### 配置启动加载器
+
+最重要的一步。
+
+首先得先装几个小软件包。别忘了刷新软件包数据库。
+
+```shell
+pacman -S efibootmgr dosfstools grub os-prober
+```
+
+然后安装`grub`：
+
+```shell
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+```
+
+然后生成配置文件：
+
+```shell
+grub-mkconfig -o /boot/grub/grub.cfg
+```
+
+出现几个`found`就差不多了。
+
+### 设置图形用户界面
+
+如果不想要`gui`已经可以退出`chroot`然后重启了。
+
+需要的话，首先安装基础包：
+
+```shell
+pacman -S xorg
+```
+
+选择全部默认就行。
+
+然后安装自己喜欢的桌面，我选择的是`kde`相对熟悉一点。
+
+```shell
+pacman -S sddm kde-applications
+```
+
+然后安装中文字体，这个一定要安装否则会乱码。
+
+```shell
+pacman -S wqy-microhei wqy-zenhei
+pacman -S adobe-source-han-sans-otc-fonts
+pacman -S noto-fonts noto-fonts-cjk noto-fonts-emoji
+```
+
+### 收尾
+
+到这里就可以退出`chroot`模式然后重启了。
+
+但是有独显的电脑需要安装独立显卡驱动，这个我还不太懂。
