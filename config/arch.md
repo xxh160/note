@@ -102,7 +102,7 @@ sudo pacman -S fuse
 
 一开始报了很多依赖错误，后来发现，`pacman`的仓库没有完全解锁。
 
-把`/etc/pacman.conf`下边这段注释去掉。
+把`/etc/pacman.conf`中这段注释去掉。
 
 ```shell
 [multilib]
