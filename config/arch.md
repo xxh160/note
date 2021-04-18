@@ -474,6 +474,7 @@ arch-chroot /mnt
 ```shell
 ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 ```
+
 运行`hwclock`生成`/etc/adjtime`。
 
 ```shell
