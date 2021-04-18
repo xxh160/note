@@ -28,6 +28,7 @@
 - java
 - maven
 - gradle
+- anaconda
 
 ### docker
 
@@ -60,6 +61,33 @@ usermod -aG docker <me>
 }
 ```
 
+### anaconda
+
+设置开机不自启动：
+
+```shell
+conda config --set auto_activate_base false
+```
+
+配置镜像，把下边这段粘帖到`～/.condarc`:
+
+```shell
+channels:
+  - defaults
+show_channel_urls: true
+default_channels:
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/msys2
+custom_channels:
+  conda-forge: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  msys2: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  bioconda: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  menpo: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  pytorch: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  simpleitk: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+```
+
 ### jetbrains-toolbox
 
 需要安装`fuse`依赖:
@@ -74,7 +102,7 @@ sudo pacman -S fuse
 
 一开始报了很多依赖错误，后来发现，`pacman`的仓库没有完全解锁。
 
-把下边这段注释去掉。
+把`/etc/pacman.conf`下边这段注释去掉。
 
 ```shell
 [multilib]
