@@ -254,7 +254,6 @@ plugins=(git zsh-syntax-highlighting zsh-autosuggestions sudo extract)
 - `split view lift/right`: `ctrl + (`
 - `split view top/bottom`: `ctrl + )`
 
-
 ### flameshot快捷键配置
 
 设置快捷键启动的方式：
