@@ -1,7 +1,5 @@
 # ABOUT
 
-个人，个人。
-
 - `config`，配置小记；
 - `conscience`，自学笔记；
 - `insight`，胡思乱想。

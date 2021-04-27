@@ -246,6 +246,15 @@ plugins=(git zsh-syntax-highlighting zsh-autosuggestions sudo extract)
 
 这里我不知道需不需要也复制一份
 
+### konsole 快捷键配置
+
+说是配置，其实也就是默认，感觉用着还行。
+
+- `new tab`: `ctrl + shift + t`
+- `split view lift/right`: `ctrl + (`
+- `split view top/bottom`: `ctrl + )`
+
+
 ### flameshot快捷键配置
 
 设置快捷键启动的方式：
@@ -280,7 +289,19 @@ plugins=(git zsh-syntax-highlighting zsh-autosuggestions sudo extract)
 
 `arch-chroot`后，`grub-install`和`grub-mkconfig`步骤也须小心谨慎，尤其是后者，不能只出现两行提示，一定要确保出现`found...`。
 
-### kde-applications显示没有后端
+---
+
+`2021.04.27`更新：
+
+首先，`bios`启动分区丢失应该是电脑关机后还没断电的时候把移动硬盘拔出了。
+
+但是我在网上搜了很久也没有找到关机和断电的关系，或许以后会继续更新。
+
+然后，丢失后其实需要做的只有两次`mount`，一次`swapon`，然后`chroot`，然后`grub-install`，`grub-mkconfig`。
+
+在`mkconfig`的时候只要确认找到一些必要的内核文件等什么的就行。
+
+### kde-applications 显示没有后端
 
 安装一个包：
 
