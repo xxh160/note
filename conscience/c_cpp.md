@@ -134,15 +134,41 @@ printf("%02x %02x %02x %02x\n", *(f), *(f + 1), *(f + 2), *(f + 3));
 
 ```c++
 class ArrayList {
-public:
-    int length = 0;
-    int array[0];
+ public:
+  int length = 1;
+  int array[0];
 };
 
 int main() {
-    ArrayList a;
-    cout << &a.length << " " << a.array << " " << &a.array << endl;
-    cout << sizeof(a) << endl;
-    return 0;
+  char str[] = "what";
+  ArrayList* a = (ArrayList*)malloc(sizeof(ArrayList) + sizeof(str) + 1);
+  strcpy((char*)(a + 1), str);
+  printf("%p %d %p %p %s\n", a, a->length, &a->length, a->array, a->array);
+  printf("%p %02x\n", (char*)a->array + sizeof(str) + 1,
+         *((char*)a->array + sizeof(str) + 1));
+  cout << sizeof(*a) << endl;
+  return 0;
 }
 ```
+
+输出为：
+
+```shell
+0x55555556aeb0 0 0x55555556aeb0 0x55555556aeb4 what
+0x55555556aeba 00
+4
+```
+
+柔性数组必须出现在结构体或者说类的尾部，且其中一定要有别的元素。
+
+长度为0的数组是不占空间的，它只是一个符号，指向结构体后第一个地址的符号。
+
+当结构体中有指针指向另外的空间时，这种方法可以使用。
+
+在`c99`标准前，出于节省空间（不愿意再写一个`*array`指针指向某片空间），和结构体空间连续的需要，人们大量使用这种方法。
+
+>`c99`咋啦？
+
+他们把结构体所需的空间以及其中字符串分配在一块连续的空间内，那多出来的1字节是`\0`，标识字符串结尾用的。
+
+本处也可以看出，`malloc`并没有进行类的初始化。
