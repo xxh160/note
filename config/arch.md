@@ -266,6 +266,35 @@ plugins=(git zsh-syntax-highlighting zsh-autosuggestions sudo extract)
 
 下载喜欢的主题，解压直接运行里边的`install.sh`就行。
 
+### 回收站配置
+
+将`rm`删除的文件存放在一个文件夹里，每周定时清空文件夹。
+
+创建回收站文件夹并写一个`safe_rm.sh`脚本:
+
+```shell
+trash="$HOME/.trash"
+
+for i in $*
+do
+  stamp=`date +"%Y-%m-%d_%H:%M:%S"`
+  file="$(basename $i)"
+  mv $i ${trash}/${file}.${stamp}
+done
+```
+
+在`.zshrc`中设置`rm`别名：
+
+```shell
+alias rm="bash $sys/sh/safe_rm.sh"
+```
+
+设置`crontab`任务，每周一凌晨4点清空回收站。
+
+```shell
+0 4 * * 1 rm -rf /home/xiayi/.trash/*
+```
+
 ## 小技巧
 
 ### 图形界面切换
