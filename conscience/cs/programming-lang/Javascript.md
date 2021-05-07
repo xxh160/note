@@ -2,7 +2,7 @@
 
 `?script`学习笔记。
 
-语言标准均以最新 `ECMAscript` 标准为主。
+参考最新 `ECMAscript` 标准。
 
 目前最新标准为`ECMAscript6`。
 
