@@ -22,3 +22,11 @@
 10. implication
     - It’s important for every build script developer to understand the different phases of the build lifecycle and their implications on performance and evaluation order of build logic.  
 11. synchronization
+12. condense
+13. skeleton
+14. nested
+15. toggle
+   - Little arrows to the left of the HTML elements allow you to toggle the view of nested elements.
+16. opinionated
+17. streamline
+   - React also streamlines how data is stored and handled, using state and props.
