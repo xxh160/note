@@ -33,6 +33,8 @@
 - go
 - wechat
 - yarn
+- simplescreenrecorder
+- firefox
 
 ### docker
 
