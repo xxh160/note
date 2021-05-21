@@ -280,3 +280,82 @@ int main() {
 关于`string`内存分配可以看一下[这一篇博文](http://www.downeyboy.com/2019/06/24/c++_string/)。
 
 毕竟无法验证，就不多写了。
+
+## derive and virtual
+
+```c++
+class B {
+ protected:
+  int y = 1;
+
+ public:
+  int get() { return this->y; }
+  void set(int v) { this->y = v * 2 + y; }
+  virtual void set(int x, int y) { this->y = x + y * 1000; }
+};
+
+class D : public B {
+ public:
+  int y = -1;
+  void set() { this->y = -2; }
+  void set(int v) { B::set(v); }
+};
+
+int main() {
+  D* d = new D();
+  d->set(100);
+  // 下一行编译错误
+  // d->set(-1, -2);
+  cout << d->get() << endl;
+  return 0;
+}
+```
+
+输出：
+
+```shell
+201
+```
+
+最重要的是父类的`B::y`和子类的`D::y`不是一个东西，也不是覆盖的关系。
+
+在父类`B`中的`get`被`D d`调用，取的还是`B::y`，不会因为在子类就取子类的`D::y`。
+
+即使是`virtual int D::get()`也是一样。虚函数是动态绑定函数，但不会改变函数的行为。
+
+编译错误是因为，子类的函数重写是先匹配函数名，若同名，直接在子类中找参数列表，父类的参数列表就直接被忽略了。这里是不是虚函数没有影响，它只是动态绑定，编译都没过，弹何动态绑定？
+
+---
+
+```c++
+class A {
+ protected:
+  int y = -2;
+
+ public:
+  virtual int getY() { return y; }
+};
+
+class B : public A {
+ private:
+  int getY() { return -100; }
+};
+
+int main() {
+  A* a = new B;
+  cout << a->getY() << endl;
+  return 0;
+}
+```
+
+结果：
+
+```c++
+-100
+```
+
+运行时没有权限机制，权限机制只有编译时按照静态类型检查。
+
+这里的虚函数就直接跳过了权限检查，因为在编译时没有错误，而运行时虚函数指针根据虚函数表找到了`B`的`getY()`。
+
+同时顺便提一句，父类的`public`和`protected`属性，子类是可以改的。

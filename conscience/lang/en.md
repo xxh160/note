@@ -86,3 +86,13 @@
    - Although the Java platform provides a wealth of application development functionality, it lacks the means to organize the basic building blocks into a coherent whole, leaving that task to architects and developers.
 10. sophisticated
     - The BeanFactory is a sophisticated implementation of the factory pattern.
+
+#### 15
+
+1. sketch
+   - Here is a sketch of class Enum.
+
+#### 17
+
+1. tangible
+   - A domain object is a tangible or intangible business entity abstracted from the real world.
