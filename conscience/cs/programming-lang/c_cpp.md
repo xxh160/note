@@ -2,6 +2,8 @@
 
 记`c/c++`相关的有意思的东西。
 
+[TOC]
+
 ## 数组、指针、引用
 
 ```c++
@@ -110,7 +112,58 @@ Matrix<int> matrix(3, 5);
 matrix[2][3] = 1;
 ```
 
-其中`[2]`是重载，`[3]`不是。
+其中`[2]`是重载，`[3]`不是，写开来就是`matrix.operator[](2)[3]`。
+
+编译器一次只能解析一个符号。
+
+重载的那一步也可以这么写：`return this->data + num * this->column;`。
+
+在一个一维的数组中，返回永远是一维指针。
+
+所以如果是三维数组怎么办？只在一个类中是无法完成这样的任务的，需要一个中间对象。
+
+中间对象中只需要一个指针属性和一个重载操作符函数。
+
+第一次重载返回一个对象，第二次重载返回一维指针。
+
+更高维可以类推。
+
+三维实例如下：
+
+```c++
+class Cube {
+ private:
+  int* p;
+  int l;
+  int w;
+  int h;
+
+  class Cube2D {
+   private:
+    int* p;
+    // 第三维
+    int h;
+
+   public:
+    Cube2D(int* p, int h) : p(p), h(h) {}
+
+    int* operator[](int j) { return p + h * j; }
+  };
+
+ public:
+  Cube(int l, int w, int h) : l(l), w(w), h(h) { this->p = new int[l * w * h]; }
+
+  Cube2D operator[](int i) { return Cube2D(p + i * (this->w + this->h), h); }
+
+  void set(int* s, int len) {
+    for (int i = 0; i < len; ++i) this->p[i] = s[i];
+  }
+};
+```
+
+注意`Cube`的重载中的指针移动，第二维第三维均需要考虑。
+
+顺便一提，`c++`的内部类和`Java`不同，外部类对内没有特权，内部类对外同样没有特权，作用只是隐藏实现。
 
 ---
 
@@ -483,3 +536,37 @@ In c! 2
 就是虚函数只是个指针指向虚函数表的，它哪知道表里是什么牛鬼蛇神。
 
 参数什么的还是静态绑定的啦。
+
+## overload operator
+
+箭头操作符重载。在迭代器里经常见到这种用法。
+
+需要注意的是，这个箭头运算符是对象调用的，不是对象指针调用的，后者是内置的`(*a).f()`。
+
+箭头操作符重载必须返回指针类型，防止套娃。当然还是可以套的。
+
+对于一个`a->f()`，可以看作`a.operator->()->f()`。
+
+```c++
+class A {
+ public:
+  A* operator->() {
+    cout << "xs" << endl;
+    return this;
+  }
+  void say() { cout << "xswl" << endl; }
+};
+
+int main() {
+  A a;
+  a.operator->()->say();
+  return 0;
+}
+```
+
+输出如下：
+
+```shell
+xs
+xswl
+```
