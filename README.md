@@ -5,12 +5,10 @@
 #### 🤔 Who am i
 
 * A pathetic NJU software engineer student.
-
-* Technique:
   
-  * Java & cpp & python.
-  * Linux, yes! Arch, yes?
-  * Back end.
+* Java & cpp & python.
+
+* Linux, yes! Arch, yes?
 
 #### 🌱 I’m currently learning
 
