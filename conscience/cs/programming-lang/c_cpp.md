@@ -570,3 +570,68 @@ int main() {
 xs
 xswl
 ```
+
+## exception
+
+```cpp
+class A {
+ public:
+  int c = 1;
+  virtual void say() { cout << "tmd A" << endl; }
+};
+
+class B : public A {
+ public:
+  void say() { cout << "tmd B" << endl; }
+};
+
+
+void f(B& a) {
+  a.c = 2;
+  a.say();
+  // 在throw这里拷贝构造
+  // B b1 = b;
+  // throw b1;
+  throw a;
+}
+
+int main() {
+  B b = B();
+  A& a = b;
+
+  b.say();
+  a.say();
+
+  try {
+    f(b);
+  } catch (A& d) {
+    d.say();
+    d.c = 3;
+  }
+
+  cout << b.c << " " << a.c << endl;
+  return 0;
+}
+```
+
+两个地方需要注意，一个是引用仍然可以使用虚函数，因为不是真正的拷贝构造。
+
+这里把子类赋值给父类的引用，但是二者本质上还是指向同一块内存。
+
+另外一个是，throw 的时候，是进行了拷贝构造，和原来的变量不是同一个。
+
+拷贝构造只看类型。
+
+输出：
+
+```shell
+tmd B
+tmd B
+tmd B
+tmd B
+2 2
+```
+
+这里倒数第二行是`tmd B`，但如果函数`f`的参数变成`A&`，那这里就会输出`tmd A`。
+
+同时，最后一行数字没有改变也说明这是拷贝不是引用。
