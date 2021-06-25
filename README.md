@@ -2,20 +2,13 @@
 
 * I'm building a personal blog! Please do look forward to!
 
-#### 🤔 Who am i
+#### 😉 Who am i
 
 * A pathetic NJU software engineer student.
   
 * Java & cpp & python.
 
 * Linux, yes! Arch, yes?
-
-#### 🌱 I’m currently learning
-
-* React, Vue
-* ics
-* os
-* Jvm
 
 #### 📬 How to reach me
 
