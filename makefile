@@ -11,7 +11,6 @@ maintain:
 	git merge tmp
 	git branch -d tmp
 	git stash pop
-	git add .
 
 history:
 	git log --graph --pretty=oneline --abbrev-commit
