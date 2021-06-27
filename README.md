@@ -14,7 +14,7 @@
 #### 📬 How to reach me
 
 * QQ: 1609824539
-* email: xxh1609824539@163.com
+* Email: xxh1609824539@163.com
 
 #### 💻 Computer is a piece of Art
 
