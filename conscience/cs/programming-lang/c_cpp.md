@@ -299,6 +299,53 @@ int main() {
 
 本处也可以看出，`malloc`并没有进行类的初始化。
 
+---
+
+类方法的`const`可以通过某些手段绕过去，比如引用。
+
+代码示例：
+
+```c++
+// ref.cpp
+class Ref {
+ private:
+  int& b;
+
+ public:
+  int a;
+
+  Ref() : a(1), b(a) {}
+
+  void set(int c) const { this->b = c; }
+
+  int get() { return this->a; }
+};
+
+// main.cpp
+int main() {
+  Ref r;
+
+  cout << "r.a: " << r.get() << endl;
+  r.set(10086);
+  cout << "r.a: " << r.get() << endl;
+
+  return 0;
+}
+```
+
+输出为：
+
+```shell
+r.a: 1
+r.a: 10086
+```
+
+可见修饰为`const`的方法改变了类属性的值。
+
+这里是因为编译器认为引用的值，也就是它指向的对象是没法改的，所以编译就过了。
+
+这里`Ref::b`换成指针，指向`Ref::a`，效果一样。
+
 ## sizeof
 
 `sizeof`是类型特化的。可变长度的类型不会影响其`sizeof`的值。
@@ -578,6 +625,58 @@ int main() {
 xs
 xswl
 ```
+
+---
+
+下标运算符重载。需要重载两种，一种是正常的那种，另外一种是有`const`修饰符的。
+
+代码示例：
+
+```c++
+// index_operator.cpp
+class IndexOperator {
+ private:
+  string c;
+
+ public:
+ IndexOperator() : c("indexoperator") {}
+
+  char& operator[](int i) {
+    cout << "non-const" << endl;
+    return this->c[i];
+  }
+
+  const char& operator[](int i) const {
+    cout << "const" << endl;
+    return this->c[i];
+  }
+};
+
+// main.cpp
+void foo(const IndexOperator& a) { cout << a[0] << endl; }
+
+int main() {
+  freopen("stdin.txt", "r", stdin);
+
+  IndexOperator i;
+
+  cout << i[0] << endl;
+  foo(i);
+
+  return 0;
+}
+```
+
+输出为：
+
+```shell
+non-const
+i
+const
+i
+```
+
+一个是可修改，另外一个是用于`const`。
 
 ## exception
 
