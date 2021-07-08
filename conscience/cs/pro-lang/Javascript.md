@@ -6,9 +6,23 @@
 
 目前最新标准为`ECMAscript6`。
 
-## references
+- [js learning notes](#js-learning-notes)
+  - [参考文档](#参考文档)
+  - [函数传入引用](#函数传入引用)
+  - [undefined](#undefined)
+  - [对象字面量](#对象字面量)
+  - [for in 语句](#for-in-语句)
+  - [apply 调用函数](#apply-调用函数)
+  - [块级作用域](#块级作用域)
+  - [函数表达式和函数声明](#函数表达式和函数声明)
+  - [解构赋值歧义](#解构赋值歧义)
+  - [箭头函数](#箭头函数)
+  - [ES6 模块 和 CommonJS 模块](#es6-模块-和-commonjs-模块)
+
+## 参考文档
 
 - `nodejs`[官方教程](http://nodejs.cn/learn)
+- [ECMAScript 6 入门](https://es6.ruanyifeng.com/)
 
 ## 函数传入引用
 
@@ -378,7 +392,7 @@ let a = (function a(a) {
 
 可以参考[这篇文章](https://segmentfault.com/a/1190000003031456)，还有[这篇文章](https://zh.javascript.info/function-expressions)
 
-## 解构赋值歧ss
+## 解构赋值歧义
 
 不止在解构赋值这边会出现。
 
@@ -420,4 +434,101 @@ console.log(eval("({fo:1})"));
 
 但是，和模式匹配相关的部分却不能乱加括号。
 
-本部分较杂，见《ECMAscript 6 入门》。
+本部分较杂，见参考文档中的 [ECMAscript 6 入门](#参考文档)。
+
+## 箭头函数
+
+参考[这篇文章](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Functions/Arrow_functions)。
+
+箭头函数不会创建自己的 this，它只会从自己的作用域链的上一层**继承** this。
+
+而普通函数会创建自己的 this：
+
+1. 严格模式下是 undefined；
+2. 如果是对象方法，则指向对象。但是！！在方法内部定义的函数的 this 可就直接指向全局了；
+3. 如果是一个构造函数，则指向新的对象；
+4. 等等。
+
+这都什么东西？？vue 教程里提了 n 次不要使用箭头函数...
+
+```js
+const app = createApp({
+  data() {
+    return { a: 1 }
+  },
+  methods: {
+    plus() {
+      this.a++
+    }
+  }
+})
+
+const vm = app.mount('#app')
+
+vm.plus()
+console.log(vm.a) // => 2
+```
+
+>注意，不应该使用箭头函数来定义 method 函数 (例如 plus：() => this.a++)。理由是箭头函数绑定了父级作用域的上下文，所以 this 将不会按照期望指向组件实例，this.a 将是 undefined。
+
+我的猜测是，它的父级作用域不是 methods，应该还隔了层什么。理由是：
+
+```js
+"use strict";
+
+let a = {
+    d: -100,
+    m: {
+        b: 1,
+        c: () => {
+            console.log(this);
+            ++this.b;
+        },
+        e: function() {
+            console.log(this);
+            let f = () => {
+                console.log(this);
+            };
+            f();
+            ++this.b;
+        },
+    },
+};
+
+console.log("a.m.b: " + a.m.b);
+a.m.c();
+console.log("a.m.b: " + a.m.b);
+a.m.e();
+console.log("a.m.b: " + a.m.b);
+```
+
+输出：
+
+```shell
+a.m.b: 1
+{}
+a.m.b: 1
+{ b: 1, c: [Function: c], e: [Function: e] }
+{ b: 1, c: [Function: c], e: [Function: e] }
+a.m.b: 2
+```
+
+用传统方法定义的函数 this 绑定到了 m 而不是 a，说明对象字面量是有 this 的，同时传统方法中的箭头函数的 this 也绑定到了 m，说明一个花括号可以成为父作用域的范围。
+
+那么第一个箭头函数的 this 为空，注意不是 undefined，我认为可能是`c:()=>{}`这里隐式创建了一个空对象。
+
+但是这个和 vue 的不符合，那就是 vue 错了吧。（x
+
+本问题 **remains to be validated**。
+
+## ES6 模块 和 CommonJS 模块
+
+内容详见[这里](https://es6.ruanyifeng.com/#docs/module)
+
+ES6 模块是编译时加载，不加载全部内容，只取需要的内容。
+
+CommonJS 模块是运行时加载，先把模块整体导入，然后再从中取出需要的部分。
+
+所以 ES6 的效率要高，但是它本身并不能作为模块被加载。
+
+同时，ES6 模块输出的变量是动态绑定，可以反映模块内部的值，但是 CommonJS 只有缓存。
